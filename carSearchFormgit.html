@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차량번호로 조회</title>
+    <style>
+        /* ... (이전 스타일 코드와 동일) ... */
+    </style>
+</head>
+<body>
+    <div id="carModal-container">
+        <div class="modal-content">
+            <form action="">
+                <fieldset>
+                    <div class="carContainer">
+                        <div class="modal-header">
+                            <h4 class="modal-title">차량 번호로 찾기</h4>
+                            <a data-dismiss="modal" aria-label="Close" href="javascript:;" class="dismiss_modal" data-toggle="tooltip"
+                                data-placemnet="bottom" data-original-title="닫기">
+                                <i class="btl bt-times bt-3x no-margin"></i>
+                            </a>
+                        </div>
+                        <span color="#3C3E42" class="writeInputCarInfoText">차량번호, 소유주명
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="#00B505" xmlns="http://www.w3.org/2000/svg">
+                                </svg>
+                        </span>
+                        <div class="writeInputCarInfo">
+                            <input type="text" id="regiNumber" placeholder="123가1234 ">
+                            <input type="text" id="ownerName" placeholder="홍길동">
+                            <button type="button" class="btn btn-primary _input_form_submit" id="searchButton"
+                                data-style="solid" data-height="55px" data-color="#FFFFFF" data-icon="false"
+                                disabled="" style="min-width:150px; padding:12px; font-weight: 25px;"
+                                onclick="submitFormWithApiCall()">검색
+                            </button>
+                        </div>
+                        <div class="carModal1" id="carModal1" style="display: none;">
+                            <div class="carModal_popup" id="modalCarInfo">
+                                <p>차량 정보 로딩중...</p>
+                                <button type="button" class="close_btn"  onclick="closeModal()">닫기</button>
+                            </div>
+                        </div>
+                        <div id="result"></div>
+                    </div>
+                    <script>
+                        document.getElementById('searchButton').addEventListener('click', function(event) {
+                            event.preventDefault();
+                            submitFormWithApiCall();
+                            document.getElementById('carModal1').style.display = 'none';
+                        });
+                        function submitFormWithApiCall() {
+                            setTimeout(() => {
+                                getCarInfo();
+                            }, 2000);
+                        }
+                        async function getCarInfo() {
+                            const regiNumber = document.getElementById("regiNumber").value;
+                            const ownerName = document.getElementById("ownerName").value;
+                            const resultDiv = document.getElementById("result");
+                            //입력 유효성 검사
+                            if (!regiNumber || !ownerName) {
+                                resultDiv.innerHTML = "<p style='color: red;'> 차량번호와 소유주명을 입력해주세요!</p>";
+                                return;
+                            }
+                            // 간단한 차량 번호 형식 검사 (예: 숫자와 문자의 조합)
+                            const regiNumberRegex = /^[0-9가-힣]+$/;
+                            if (!regiNumberRegex.test(regiNumber)) {
+                                resultDiv.innerHTML = "<p style='color: red;'> 유효하지 않은 차량 번호 형식입니다.</p>";
+                                return;
+                            }
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 20000);
+                            try {
+                                const startTime = performance.now();
+                                const response = await fetch('데이터서버', {});
+                                if (!response.ok) {
+                                    throw new Error(`서버 오류: ${response.status}`);
+                                }
+                                const data = await response.json();
+                                const endTime = performance.now();
+                                clearTimeout(timeoutId);
+                                if (data.result === "SUCCESS") {
+                                    showModal();
+                                    console.log(`⏳ API 응답시간: ${(endTime - startTime).toFixed(2)}ms`);
+                                } else {
+                                    resultDiv.innerHTML = `<p style='color: red;'> 조회 실패: ${data.errMsg}</p>`;
+                                }
+                            } catch (error) {
+                                if (error.name === 'AbortError') {
+                                    resultDiv.innerHTML = "<p style='color: red;'> 요청 시간 초과. 네트워크 상태를 확인해주세요.</p>";
+                                } else if (error instanceof TypeError && error.message === 'Failed to fetch') {
+                                    resultDiv.innerHTML = "<p style='color: red;'> 네트워크 오류. 인터넷 연결을 확인해주세요.</p>";
+                                } else {
+                                    resultDiv.innerHTML = `<p style='color: red;'> 오류 발생: ${error.message}</p>`;
+                                }
+                            }
+                        }
+                        function showModal() {
+                            document.getElementById("carModal1").style.display = "flex";
+                        }
+                        function closeModal() {
+                            document.getElementById("carModal1").style.display = "none";
+                        }
+                    </script>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
