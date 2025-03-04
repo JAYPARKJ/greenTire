@@ -5,7 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>차량번호로 조회</title>
     <style>
-        /* ... (이전 스타일 코드와 동일) ... */
+        #carModal-container {
+            display: flex;
+            position: fixed;              /* 화면 고정 */
+            top: 0;                       /* 화면 상단부터 */
+            left: 0;                      /* 화면 왼쪽부터 */
+            width: 550px;                  /* 화면 가로폭 100% */
+            height: 300px;                 /* 화면 세로폭 100% */
+            background: #fff;  
+            z-index: 9999;               /* 최상단 레이어 */
+            justify-content: flex-start;      /* 팝업 수평 중앙정렬 (flex 쓸 때) */
+               /* align-items: center; 제거   */
+        }
+        
+        #regiNumber, #ownerName {
+            background-color: #FFFFFF;
+            padding : 12px;
+            width: 150px;
+            font-weight: 25px;
+            
+        }
+        .writeInputCarInfo {
+            gap: 10px;
+            margin-bottom: 30px; /* 아래쪽 여백 추가 */
+        }
+        .privacy-container {
+            display: flex;
+            justify-content: space-between; /* 또는 space-around, center 등 필요에 따라 조정 */
+            width: 100%; /* 또는 적절한 너비 설정 */
+            gap : 10px;
+            margin-bottom: 20px; /* 아래쪽 여백 추가 */
+        }
+        .privacy-container .form-group {
+            flex: 1; /* 각 요소가 동일한 공간을 차지하도록 설정 */
+            /* 필요한 경우 추가적인 스타일 설정 */
+        }
+        #privacyText, #thirdpartyText {
+            color:#5A5C60;
+            font-size:15px;
+            cursor : pointer;
+            display: flex;
+            align-items: center;
+
+        }
+        #privacyWrap, #thirdparty {
+            display: flex;
+            align-items: center;
+            justify-content : flex-start;
+            flex-direction: row;
+            gap: 10px;
+        }
+        .iconAndText{
+            display:flex;
+            align-items:center;
+            flex-direction:row;
+        }
+        .form-control {
+            max-height: 300px;
+            overflow : auto;
+            border: 1px solid #000;
+            padding : 10px;
+            background-color: #fff;
+            /* position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); */
+            display:none;
+        }
+         
+        #privacyBody {
+            display:flex;
+            flex-direction: row;
+            align-items:center;
+            gap : 10px;
+        }
+        /* 모달 전체 영역 스타일 */
+        .carModal1 {
+            display: none;                 /* 처음엔 안 보이도록 */
+            position: fixed;              /* 화면 고정 */
+            top: 0;                       /* 화면 상단부터 */
+            left: 0;                      /* 화면 왼쪽부터 */
+            width: 100%;                  /* 화면 가로폭 100% */
+            height: 100%;                 /* 화면 세로폭 100% */
+            background: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+            z-index: 9999;               /* 최상단 레이어 */
+            justify-content: center;      /* 팝업 수평 중앙정렬 (flex 쓸 때) */
+            align-items: center;          /* 팝업 수직 중앙정렬 (flex 쓸 때) */
+        }
+        .carModal_popup {
+            background: #fff;            /* 팝업 내부는 흰색 배경 */
+            padding: 20px;
+            border-radius: 6px;
+            width: 80%;
+            max-width: 400px;
+            margin: 0 auto;              /* 가로 가운데 정렬 (flex 사용 시 필요 없을 수도 있음) */
+        }
+        .close_btn {
+            background-color: #ccc;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+         
+        .hidden {
+            display: none;
+        }
+        .clickable, .thirdClickable {
+            cursor: pointer;
+            text-decoration: none;
+           
+        }
+
+       
+        .close_btn {
+            background-color:transparent;
+            border : none;
+            padding : 8px 12px;
+            cursor : 0;
+            margin: 0;
+            font-size:30px;
+            text-align: right;
+           
+        }
+        .close_thirdbtn {
+            background-color:transparent;
+            border : none;
+            padding : 8px 12px;
+            cursor : pointer;
+            margin: 0;
+            font-size:30px;
+            text-align: right;
+        }
+        /* 모달 헤더 스타일 */
+        .modal-header {
+            display: flex; /* 가로 정렬 */
+            justify-content: center; /* 좌우 정렬 */
+            text-align: center;
+            align-items: center; /* 세로 정렬 */
+            position: relative;
+            font-size: 25px;
+            border-bottom: none;
+            width: 100%;
+        }
+        .btn btn-primary _input_form_submit {
+            cursor:pointer;
+        }
+     
     </style>
 </head>
 <body>
@@ -102,6 +248,9 @@
                             document.getElementById("carModal1").style.display = "none";
                         }
                     </script>
+                    <div class="privacy-container"> 
+                    개인정보 처리부분 삭제
+                    </div>
                 </fieldset>
             </form>
         </div>
