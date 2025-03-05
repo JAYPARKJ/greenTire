@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차량번호로 조회</title>
+    <link rel="stylesheet" href="imwebCarModal.css">
+</head>
+<body>
+    <div id="carModal-container">
+        <div class="modal-content">
+            <form id="carSearchForm">
+                <fieldset>
+                    <div class="carContainer">
+                        <div class="modal-header">
+                            <h4 class="modal-title">차량 번호로 찾기</h4>
+                            <a data-dismiss="modal" aria-label="Close" href="javascript:;" class="dismiss_modal" data-toggle="tooltip"
+                                data-placemnet="bottom" data-original-title="닫기">
+                                <i class="btl bt-times bt-3x no-margin"></i>
+                            </a>
+                        </div>
+                        <span color="#3C3E42" class="writeInputCarInfoText">차량번호, 소유주명
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="#00B505" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="10" cy="10" r="10" fill="#00B505"></circle>
+                                <path d="M5.51099 6.86717C6.49881 5.35636 8.20578 4.35809 10.1453 4.35809C12.7904 4.35809 15.002 6.2138 15.549 8.69409" stroke="white" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M14.08 9.026L14.4965 9.35255L14.9193 9.68361L15.8688 10.4267L17.018 8.54451L14.08 9.026Z" stroke="white" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M14.7418 13.4266C13.7534 14.9375 12.0467 15.9357 10.1072 15.9357C7.46236 15.9357 5.25075 14.08 4.70349 11.5997" stroke="white" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path d="M6.17311 11.2681L4.38429 9.86707L3.23474 11.7496L6.17311 11.2681Z" stroke="white" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </span>
+                        <div class="writeInputCarInfo">
+                            <input type="text" id="regiNumber" placeholder="123가1234 ">
+                            <input type="text" id="ownerName" placeholder="홍길동">
+                            <button type="submit" class="btn btn-primary _input_form_submit" id="searchButton"
+                                data-style="solid" data-height="55px" data-color="#FFFFFF" data-icon="false"
+                                style="min-width:150px; padding:12px; font-weight: 25px;">검색
+                            </button>
+                        </div>
+                        <div class="carModal1" id="carModal1" style="display: none;">
+                            <div class="carModal_popup" id="modalCarInfo">
+                                <p>차량 정보 로딩중...</p>
+                                <button type="button" class="close_modalbtn" onclick="closeModal()">닫기</button>
+                            </div>
+                        </div>
+                        <div id="result"></div>
+                    </div>
+                    <div class="privacy-container">
+                        <div class="form-group privacy" id="privacyWrap">
+                            <div class="colpsnlInfo" id="privacyBody">
+                                <div class="iconAndText">
+                                    <svg id="agreeColInfo" width="16" height="16" viewBox="0 0 25 24" fill="#00B505" xmlns="http://www.w3.org/2000/svg" color="#FFFFFF">
+                                        <g id="Radio/Atoms">
+                                            <rect id="bg-rect" x="0.5" width="24" height="24" rx="12" fill="#D9D9D9"></rect>
+                                            <g id="Etc/Check">
+                                                <path id="Vector 784"
+                                                    d="M7.5 13.0359L10.0189 15.1687C10.6098 15.669 11.4669 15.5948 11.9731 14.9995L17.5 8.5"
+                                                    stroke="#FFFFFF"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-opacity="1" id="Etc/Check2">
+                                                </path>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                    <script>
+                                        let isPersnlInfoAgreed = false;
+                                        document.getElementById("agreeColInfo").addEventListener("click", function() {
+                                            let rect = document.getElementById("bg-rect");
+                                            let check = document.getElementById("Etc/Check");
+
+                                            if (rect.getAttribute('fill') === "#00B505") {
+                                                rect.setAttribute('fill', "#D9D9D9");
+                                                check.style.display = "none";
+                                                isPersnlInfoAgreed = false;
+                                            } else {
+                                                rect.setAttribute('fill', "#00B505");
+                                                check.style.display = "block";
+                                                isPersnlInfoAgreed = true;
+                                            }
+                                            updateSearchButtonState();
+                                        });
+                                    </script>
+                                    <span id="privacyText" class="clickable">개인정보 수집 및 이용 동의</span>
+                                </div>
+                                <div class="form-control hidden" id="privacyContent" style="max-width:200px; width:200px;">
+                                    <div class="modal-header">
+                                        <span>개인정보 수집 및 이용동의</span>
+                                        <span id="closePrivacyBtn" class="close_privacybtn">&times;</span>
+                                    </div>
+                                    개인정보 수집 내용
+                                </div>
+                                <script>
+                                    document.getElementById("privacyText").onclick = function() {
+                                        let privacyContent = document.getElementById("privacyContent");
+                                        privacyContent.style.display = "block";
+                                    }
+                                    document.getElementById("closePrivacyBtn").onclick = function() {
+                                        let privacyContent = document.getElementById("privacyContent");
+                                        privacyContent.style.display = "none";
+                                    }
+                                    document.addEventListener("click", function(event) {
+                                        let privacyContent = document.getElementById("privacyContent");
+                                        let privacyText = document.getElementById("privacyText");
+
+                                        if (privacyContent.style.display === "block" &&
+                                            !privacyContent.contains(event.target) &&
+                                            event.target !== privacyText) {
+                                            privacyContent.style.display = "none";
+                                        }
+                                    });
+                                </script>
+                                <div class="form-groupprivacy thirdparty" id="thirdparty">
+                                    <div class="iconAndText">
+                                        <svg id="agreeThirdIcon" width="16" height="16" viewBox="0 0 25 24" fill="#00B505" xmlns="http://www.w3.org/2000/svg" color="#FFFFFF">
+                                            <g id="Radio/Atoms">
+                                                <rect id="bg-rect2" x="0.5" width="24" height="24" rx="12" fill="#D9D9D9"></rect>
+                                                <g id="Etc/Check2">
+                                                    <path id="Vector 784"
+                                                        d="M7.5 13.0359L10.0189 15.1687C10.6098 15.669 11.4669 15.5948 11.9731 14.9995L17.5 8.5"
+                                                        stroke="#FFFFFF"
+                                                        stroke-width="2"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-opacity="1">
+                                                    </path>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                        <script>
+                                            let isThirdPartyAgreed = false;
+                                            document.getElementById("agreeThirdIcon").addEventListener("click", function() {
+                                                let rect = document.getElementById("bg-rect2");
+                                                let check = document.getElementById("Etc/Check2");
+
+                                                if (rect.getAttribute('fill') === "#00B505") {
+                                                    rect.setAttribute('fill', "#D9D9D9");
+                                                    check.style.display = "none";
+                                                    isThirdPartyAgreed = false;
+                                                } else {
+                                                    rect.setAttribute('fill', "#00B505");
+                                                    check.style.display = "block";
+                                                    isThirdPartyAgreed = true;
+                                                }
+                                                updateSearchButtonState();
+                                            });
+                                        </script>
+                                        <span id="thirdpartyText" class="thirdClickable">개인정보 제3자 제공동의</span>
+                                    </div>
+                                    <div class="form-control hidden" id="thirdPartyContent" style="max-width:200px; width:200px;">
+                                        <div class="modal-header">
+                                            <span>개인정보 제3자 제공 동의</span>
+                                            <span id="closeThirdPartyBtn" class="close_thirdbtn">&times;</span>
+                                        </div>
+                                        개인정보 제3자 제공 동의 내용
+                                    </div>
+                                </div>
+                                <script>
+                                    document.getElementById("thirdpartyText").onclick = function() {
+                                        document.getElementById("thirdPartyContent").style.display = "block";
+                                    }
+                                    document.getElementById("closeThirdPartyBtn").onclick = function() {
+                                        document.getElementById("thirdPartyContent").style.display = "none";
+                                    }
+                                    document.addEventListener("click", function(event) {
+                                        let thirdPartyContent = document.getElementById("thirdPartyContent");
+                                        let thirdpartyText = document.getElementById("thirdpartyText");
+
+                                        if (thirdPartyContent.style.display === "block" &&
+                                            !thirdPartyContent.contains(event.target) &&
+                                            event.target !== thirdpartyText) {
+                                            thirdPartyContent.style.display = "none";
+                                        }
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
