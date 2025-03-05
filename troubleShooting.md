@@ -3,22 +3,25 @@
 ## 문제 상황
 - 개인정보 동의 체크박스 및 검색 버튼 기능 개선 필요
 
-1. isChecked() 함수의 문법적 오류 
+1. isChecked() 함수의 문법적 오류
+```
 function isChecked(iconId) {
     let rectId = iconId === "agreeColInfo" ? "bg-rect" : "bg-rect2";
     let rect = document.getElementById(rectId);
-    return document.getElementById('iconId').getAttribute('fill' === "#00B505");
-}
-document.getElementById('iconId') 부분에서 'iconId'를 문자열 리터럴로 잘못 사용함
- 
+    return document.getElementById('iconId').getAttribute('fill' === "#00B505");}
 
--> 코드 수정 
+document.getElementById('iconId') 부분에서 'iconId'를 문자열 리터럴로 잘못 사용함 
+``` 
+
+-> 코드 수정<br>
+```
 function isChecked(iconId) {
     let rectId = iconId === "agreeColInfo" ? "bg-rect" : "bg-rect2";
     let rect = document.getElementById(rectId);
-    return rect.getAttribute('fill') === "#00B505";
-}
+    return rect.getAttribute('fill') === "#00B505";}
+```
 
+```
 2. 체크박스 검증 로직의 위치 -> submitFormWithApiCall() 함수 내부나 시작 부분에 배치로 수정
 function submitFormWithApiCall() {
     // 체크박스 검증 추가
@@ -42,7 +45,9 @@ function submitFormWithApiCall() {
     // 모달 표시
     document.getElementById('carModal1').style.display = "block";
 }
+```
 
+```
 3. eventListener 중복 사용 
 1번 코드 주석처리
 document.getElementById('searchButton').addEventListener('click', function(event) {
@@ -57,12 +62,13 @@ document.getElementById('searchButton').addEventListener('click', function(event
                      onclick="submitFormWithApiCall()">검색
 </button>
 
+```
  
 4. 모달 팝업 순서 오류
-submitFormWithApiCall()이 호출오류로 차량정보 로딩모달팝업 및  개인정보제공 alert  호출됨
-=> 개인정보 수집 및 제3자 제공 동의 체크박스를 클릭 후 검색 버튼이 활성화
+submitFormWithApiCall()이 호출오류로 차량정보 로딩모달팝업 및  개인정보제공 alert  호출됨<br>
+=> 개인정보 수집 및 제3자 제공 동의 체크박스를 클릭 후 검색 버튼이 활성화<br>
 =>  그 후에 모달창이 나오도록 구현
-<script>
+``` 
     // 개인정보 및 제3자 제공 동의 상태 추적 변수
     let isPersnlInfoAgreed = false;
     // 개인정보 수집 동의 SVG 클릭 이벤트
@@ -83,8 +89,7 @@ submitFormWithApiCall()이 호출오류로 차량정보 로딩모달팝업 및  
         }
         updateSearchButtonState();  
     });
-</script>
-<script>
+ 
     document.getElementById("thirdpartyText").onclick = function() {
         document.getElementById("thirdPartyContent").style.display = "block";
     }
@@ -104,8 +109,10 @@ submitFormWithApiCall()이 호출오류로 차량정보 로딩모달팝업 및  
             thirdPartyContent.style.display = "none";
         }
         });
-</script>
-<script>
+ 
+```
+
+```
   검색 버튼 상태 업데이트 함수
     function updateSearchButtonState() {
     const searchButton = document.getElementById('searchButton');
@@ -148,14 +155,14 @@ submitFormWithApiCall()이 호출오류로 차량정보 로딩모달팝업 및  
         document.getElementById('carModal1').style.display = "block";
         
     });
-</script>
  
+``` 
 ## 해결 
-1.개인정보 수집 및 제3자 제공 동의 체크박스를 모두 클릭해야 검색 버튼이 활성화
-2.검색 버튼은 초기에 비활성화처리 및 회색으로 표시
-3.두 개의 체크박스를 모두 클릭시 검색 버튼이 초록색으로 활성화
-4.검색 버튼 클릭 시 차량번호와 소유주명 입력 여부를 먼저 확인
-5.조건 충족시 submitFormWithApiCall() 함수가 호출되고 모달창이 표시
+1. 개인정보 수집 및 제3자 제공 동의 체크박스를 모두 클릭해야 검색 버튼이 활성화<br>
+2. 검색 버튼은 초기에 비활성화처리 및 회색으로 표시<br>
+3. 두 개의 체크박스를 모두 클릭시 검색 버튼이 초록색으로 활성화<br>
+4. 검색 버튼 클릭 시 차량번호와 소유주명 입력 여부를 먼저 확인<br>
+5. 조건 충족시 submitFormWithApiCall() 함수가 호출되고 모달창이 표시
  
  
 ## 코드 변경 내용
